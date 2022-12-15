@@ -19,10 +19,10 @@ int smilingFace[] = {  //"^ⅴ^"
   0x24, 0x24, 0x7F, 0x24, 0x24, 0x7F, 0x24, 0x24
 };
 
-const char *ssid = "YaMammasHouse";    // Enter your WiFi name
-const char *password = "DeezNuts#67";  // Enter WiFi password
+const char *ssid = "";    // Enter your WiFi name
+const char *password = "";  // Enter WiFi password
 // MQTT Broker
-const char *mqtt_broker = "192.168.1.51";  // Enter your WiFi or Ethernet IP
+const char *mqtt_broker = "";  // Enter your WiFi or Ethernet IP
 const char *topic = "test/topic";
 const int mqtt_port = 1883;
 WiFiClient espClient;
