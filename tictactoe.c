@@ -5,7 +5,20 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <time.h>
+#include <C:\Program Files (x86)\mosquitto\devel\mosquitto.h>
 
+void on_connect(struct mosquitto *mosq, void *obj, int rc) {
+	printf("ID: %d\n", * (int *) obj);
+	if(rc) {
+		printf("Error with result code: %d\n", rc);
+		exit(-1);
+	}
+	mosquitto_subscribe(mosq, NULL, "test/t1", 0);
+}
+
+void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
+	printf("New message with topic %s: %s\n", msg->topic, (char *) msg->payload);
+}
 char board[3][3];
 const char PLAYER = 'X';
 const char PLAYER2 = '0';
