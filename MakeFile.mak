@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 
 SOURCES = tictactoe.c mqtt_pub.c mqtt_sub.c daemon.c
-EXECUTABLE = tic-tac-toe
+EXECUTABLE = tictactoe
 
 # Specify the library dependencies
 LIBS = -lmqtt
