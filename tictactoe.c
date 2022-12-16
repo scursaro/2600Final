@@ -1,13 +1,13 @@
-//Game between two players
 
 // have some funcitions that check the board,print the board, have a random move, or a player move
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <time.h>
-#include <C:\Program Files (x86)\mosquitto\devel\mosquitto.h>
 
-void on_connect(struct mosquitto *mosq, void *obj, int rc) {
+#include <C:\Program Files (x86)\mosquitto\devel\mosquitto.h> //mosquitto.h file
+
+void on_connect(struct mosquitto *mosq, void *obj, int rc) { //connects to mqtt
 	printf("ID: %d\n", * (int *) obj);
 	if(rc) {
 		printf("Error with result code: %d\n", rc);
@@ -28,22 +28,38 @@ const char COMPUTER = '0';
 void resetBoard();
 void printBoard(); //print out the new layout
 int checkSpace(); ////check if the location is taken, if not place guess, else return to user to pick new spot
-void playerMove();
-void playerMove2();
-void computerMove();
+void playerEsp();
+void player2Move();
+//void computerMove();
 char checkWinner(); // another function to check if the person on didWin()
 void printWinner(char);
 
 int main(){
-    
+    int rc, id=12;
+
+	mosquitto_lib_init();
+
+	struct mosquitto *mosq;
+
+	mosq = mosquitto_new("subscribe-test", true, &id);
+	mosquitto_connect_callback_set(mosq, on_connect);
+	mosquitto_message_callback_set(mosq, on_message);
+	
+	rc = mosquitto_connect(mosq, "localhost", 1883, 10);
+	if(rc) {
+		printf("Could not connect to Broker with return code %d\n", rc);
+		return -1;
+	}
+
+	
+
+	//return 0;
 
     char winner = ' ';
 
     resetBoard();
 //prompt user for game they wish to play
     printf("WELCOME TO TIC-TAC-TOE!\n");
-    printf("\n1--Person vs Person\n");
-    printf("\n2--Person vs Computer");
 //read information from console
     int option;
 
@@ -51,13 +67,13 @@ int main(){
     //possibly start the game, maybe a while loop with a nested switch
     //Will also need two separate cases, One for With Player, and One with random 
 
-    if(option ==1)
+    if(rc ==true)
     {
         while(winner == ' ' && checkSpace() !=0)
     {
         printBoard();
 
-        playerMove();//after selection is made, prompt user to enter two int's for their location
+        playerEsp();//after selection is made, prompt user to enter two int's for their location
         winner = checkWinner();
         if(winner != ' ' || checkSpace() ==0)
         {
@@ -65,7 +81,7 @@ int main(){
 
         }
         printBoard();
-        playerMove2();
+        player2Move();
         winner = checkWinner();
         if(winner != ' ' || checkSpace() ==0)
         {
@@ -77,38 +93,17 @@ int main(){
     printWinner(winner);
 
     }
-    else if(option ==2)
-    {
-    while(winner == ' ' && checkSpace() !=0)
-    {
-        printBoard();
+   
+   
+   
+   mosquitto_loop_start(mosq);
+	printf("Press Enter to quit...\n");
+	getchar();
+	mosquitto_loop_stop(mosq, true);
 
-        playerMove();//after selection is made, prompt user to enter two int's for their location
-        winner = checkWinner();
-        if(winner != ' ' || checkSpace() ==0)
-        {
-            break;
-
-        }
-        computerMove();
-        winner = checkWinner();
-        if(winner != ' ' || checkSpace() ==0)
-        {
-            break;
-
-        }
-    }
-    printBoard();
-    printWinner(winner);
-    }
-    else{
-        printf("Invalid Selection");
-    }
-
-
-
-
-    
+	mosquitto_disconnect(mosq);
+	mosquitto_destroy(mosq);
+	mosquitto_lib_cleanup();
     
     
     return 0;
@@ -156,7 +151,7 @@ int checkSpace()
 
 
 }
-void playerMove()
+void playerEsp()
 {
     int x;
     int y;
@@ -188,7 +183,7 @@ void playerMove()
 
 
 }
-void playerMove2()
+void player2Move()
 {
     int x;
     int y;
@@ -220,7 +215,7 @@ void playerMove2()
 
 
 }
-void computerMove()
+/*void computerMove()
 {
    srand(time(0));
    int x;
@@ -240,7 +235,7 @@ void computerMove()
    }
 
 
-}
+}*/
 char checkWinner()
 {
     //check the rows
